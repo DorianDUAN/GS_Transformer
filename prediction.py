@@ -9,19 +9,20 @@ from create_data import create_prediction_input,StockDataset
 from trans_train import train
 
 def predict(data,input):
-    # fixed hyperparams
-    BATCH_SIZE = 10
+    # fixed hyperparams 
+    # 这里是进行预测时所使用的的模型全部参数，在Tuning后进行修改
+    BATCH_SIZE = 10 
     Y_OUT = 1 #length of output
     NUM_WORKERS = 0
     LR = 0.001 #learning rate
-    TRAIN_SIZE = 450 
-    N_EPOCHS = 5
+    TRAIN_SIZE = 450 #training set 的size
+    N_EPOCHS = 5 
     N_IN = 25 #length of input
-    K = 2 # lags 
+    K = 4 # lags of prediction 预测lags 乘 时间间隔 之后的price
     SEED = 0
 
-    # model parameters
-    dim_input = 1 #number of features
+    # model parameters 这边尚未进行过调参
+    dim_input = 1 #number of features 因为只有price所以为1
     output_sequence_length = 1 #length of output
     dec_seq_len = 1 #length of output
     dim_val = 64
@@ -42,14 +43,16 @@ def predict(data,input):
     train_loader = DataLoader(dataset=train_dataset,batch_size=BATCH_SIZE)
 
     train(net, N_EPOCHS, train_loader, LR, MODEL_PATH)
+
+    #将预测的input调整为model 所需的格式
     predict_input = []
     for i in input:
         list = [i]
         predict_input.append(list)
-
     predict_input = torch.FloatTensor([predict_input for i in range(2)])
+    
     y_pred = net(predict_input)
     result = y_pred.detach().numpy().tolist()
+    
     # undo the Min-Max
-
     return result[0][0] * (max_ - min_) + min_

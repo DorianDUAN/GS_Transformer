@@ -74,7 +74,7 @@ def train_eval(data):
     # 600: 0.015148541885428126
     N_EPOCHS = 5
     N_IN = 25 #length of input
-    K = 2 # lags 
+    K = 4 # lags 
     TEST_SIZE = 10
 
     # model parameters
@@ -120,15 +120,12 @@ if __name__ == "__main__":
     PATHS = 'dataset/processed.csv'
     #load data
     df =  pd.read_csv(PATHS, index_col=0)
-    # !!!! If the consecutive null values is > 2, interpolate function will do nothing
-    # we drop those tickers with consecutive null values greater than 2
     
-
-    t_mse = 0
     for i in range(1):
         date_index=random.randint(0,len(df["DATE"]))
         data = df.interpolate().dropna(axis=1)[df['DATE'] == df['DATE'][date_index]]['LAST_PRICE']
-        t_mse += train_eval(data)
-    print("mse:",t_mse/1)
-            
-    #tensorboard --logdir=runs'''
+        # !!!! If the consecutive null values is > 2, interpolate function will do nothing
+        # we drop those tickers with consecutive null values greater than 2
+        mse = train_eval(data) #此处，data应为一个Series，并且长度大于450+20+25+2+1
+        # train_size + test+size + input_dimension + lags + output_dimension
+    
