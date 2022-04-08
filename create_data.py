@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
+
 class StockDataset(Dataset):
     """ return (X, y) 
         X : (n_lags, features(6))
@@ -13,8 +14,8 @@ class StockDataset(Dataset):
         super().__init__()
         self.X = torch.flatten(X, start_dim=1,end_dim=2).transpose(0, 1).transpose(1, 2)
         self.y = torch.flatten(y[0], end_dim=1)
-        print("Input data Size: ", self.X.size())
-        print("Label Size: ", self.y.size())
+        # print("Input data Size: ", self.X.size())
+        # print("Label Size: ", self.y.size())
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
@@ -102,4 +103,4 @@ def create_prediction_input(data,n_lags,y_days,input_size,lags):
     """ return a tensor with shape: X:(num_features, 1, num_samples, n_lags) 
                                     y:(num_features, 1, num_samples, y_days)"""
                                     
-    return torch.FloatTensor(X_train), torch.FloatTensor(y_train),min_,max_
+    return torch.FloatTensor(np.array(X_train)), torch.FloatTensor(np.array(y_train)), min_, max_
